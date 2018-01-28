@@ -1,20 +1,20 @@
 ﻿namespace SecretMission
 {
-    public interface IWriter
+    public interface ILineWriter
     {
         void WriteLine(string line);
     }
 
-    public interface IReader
+    public interface ILineReader
     {
         string ReadLine();
     }
 
-    public interface IReaderWriter : IWriter, IReader
+    public interface ILineLineReaderLineWriter : ILineWriter, ILineReader
     {
     }
 
-    public class ConsoleWrapper: IReaderWriter
+    public class ConsoleWrapper: ILineLineReaderLineWriter
     {
         public void WriteLine(string line)
         {
