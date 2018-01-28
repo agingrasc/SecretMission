@@ -6,7 +6,7 @@ namespace SecretMission
     {
         static void Main(string[] args)
         {
-            var atm = new ATM();
+            var atm = new Atm();
             while (true)
             {
                 Console.WriteLine(@"Menu");
