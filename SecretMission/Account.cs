@@ -61,7 +61,7 @@ namespace SecretMission
             }
         }
 
-        public int AccountNo
+        public int AccountNumber
         {
             get => accountNumber;
             set
@@ -71,7 +71,7 @@ namespace SecretMission
             }
         }
 
-        public int PinNo
+        public int PinNumber
         {
             get => pinNumber;
             set
