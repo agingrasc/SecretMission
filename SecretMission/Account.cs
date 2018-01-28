@@ -10,74 +10,74 @@ namespace SecretMission
 
     public class Account : IAccount
     {
-        
+        private string firstName, lastName, dateOfBirth, phoneNumber;
+        private double balance;
+        private int pinNumber, accountNumber;
 
-        public Account(int pinNo, int accountNo)
+        public Account(int pinNumber, int accountNumber)
         {
-            _pinNo = 1234567890;
-            _accountNo = accountNo;
-            _balance = 0;
+            this.pinNumber = 1234567890;
+            this.accountNumber = accountNumber;
+            balance = 0;
         }
 
         public string FirstName
         {
-            get => _firstName;
+            get => firstName;
             set
             {
                 if (string.IsNullOrEmpty(value)) throw new Exception();
-                _firstName = value;
+                firstName = value;
             }
         }
-
-        string _firstName, _lastName, _dateOfBirth, _phoneNo;
-        double _balance;
-        int _pinNo, _accountNo;
 
         public string LastName
         {
-            get => _lastName;
+            get => lastName;
             set
             {
                 if (string.IsNullOrEmpty(value)) throw new Exception();
-                _lastName = value;
+                lastName = value;
             }
         }
+
         public string DateOfBirth
         {
-            get => _dateOfBirth;
+            get => dateOfBirth;
             set
             {
                 if (string.IsNullOrEmpty(value)) throw new Exception();
-                _dateOfBirth = value;
+                dateOfBirth = value;
             }
         }
-        public string PhoneNo
+
+        public string PhoneNumber
         {
-            get { return _phoneNo; }
+            get => phoneNumber;
             set
             {
                 if (string.IsNullOrEmpty(value)) throw new Exception();
-                _phoneNo = value;
+                phoneNumber = value;
             }
         }
 
         public int AccountNo
         {
-            get => _accountNo;
+            get => accountNumber;
             set
             {
-                if (_accountNo < 0) throw new Exception();
-                _accountNo = value;
+                if (accountNumber < 0) throw new Exception();
+                accountNumber = value;
             }
         }
 
         public int PinNo
         {
-            get => _pinNo;
+            get => pinNumber;
             set
             {
-                if (_pinNo >= 0)
-                    _pinNo = value;
+                if (pinNumber >= 0)
+                    pinNumber = value;
                 else
                     throw new Exception();
             }
@@ -85,24 +85,24 @@ namespace SecretMission
 
         public double Balance
         {
-            get => _balance;
+            get => balance;
             set
             {
                 if (double.IsNaN(value)) throw new Exception();
-                _balance = value;
+                balance = value;
             }
         }
 
         public void GenerateAccount()
         {
             Console.WriteLine(@"Enter your first name: ");
-            _firstName = Console.ReadLine();
+            firstName = Console.ReadLine();
             Console.WriteLine(@"Enter your last name: ");
-            _lastName = Console.ReadLine();
+            lastName = Console.ReadLine();
             Console.WriteLine(@"Enter your phone number: ");
-            _phoneNo = Console.ReadLine();
+            phoneNumber = Console.ReadLine();
             Console.WriteLine(@"Enter your date of birth: ");
-            _dateOfBirth = Console.ReadLine();
+            dateOfBirth = Console.ReadLine();
         }
     }
 }

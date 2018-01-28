@@ -44,7 +44,7 @@ namespace SecretMission
 
             Console.WriteLine(
                 accountExists
-                    ? $@"{Environment.NewLine}First name: {_curAc.FirstName}{Environment.NewLine}Last name: {_curAc.LastName}{Environment.NewLine}Phone number: {_curAc.PhoneNo}{Environment.NewLine}Date of birth: { _curAc.DateOfBirth}{Environment.NewLine}": @"Account number and PIN do not match.");
+                    ? $@"{Environment.NewLine}First name: {_curAc.FirstName}{Environment.NewLine}Last name: {_curAc.LastName}{Environment.NewLine}Phone number: {_curAc.PhoneNumber}{Environment.NewLine}Date of birth: { _curAc.DateOfBirth}{Environment.NewLine}": @"Account number and PIN do not match.");
         }
 
         public void Deposit()
