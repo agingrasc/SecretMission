@@ -16,7 +16,7 @@ namespace SecretMission
 
         public Account(int pinNumber, int accountNumber)
         {
-            this.pinNumber = 1234567890;
+            this.pinNumber = pinNumber;
             this.accountNumber = accountNumber;
             balance = 0;
         }
