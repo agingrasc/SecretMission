@@ -43,7 +43,7 @@ namespace SecretMission
             }
         }
 
-        string firstName, _lastName, _dateOfBirth, _phoneNo;
+        string _firstName, _lastName, _dateOfBirth, _phoneNo;
         double _balance;
         int _pinNo, _accountNo;
 
@@ -102,7 +102,7 @@ namespace SecretMission
             get => _balance;
             set
             {
-                if (double.IsNaN(value)) throw;
+                if (double.IsNaN(value)) throw new Exception();
                 _balance = value;
             }
         }
@@ -116,7 +116,7 @@ namespace SecretMission
             Console.WriteLine(@"Enter your phone number: ");
             _phoneNo = Console.ReadLine();
             Console.WriteLine(@"Enter your date of birth: ");
-            dateOfBirth = Console.ReadLine();
+            _dateOfBirth = Console.ReadLine();
         }
     }
 
@@ -217,6 +217,7 @@ namespace SecretMission
 
         private bool ValidateAccount()
         {
+            return false;
             //TODO: maybe write some code here because it is duplicated in more than one method
         }
     }
