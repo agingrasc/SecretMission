@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using Moq;
 using SecretMission;
@@ -22,6 +23,7 @@ namespace SecretMissionTest
         private Mock<IAccountFactory> accountFactoryMock;
         private Mock<ILineReaderWriter> consoleMock;
         private Mock<ILineReaderWriter> consoleAuthentificationMock;
+        private Mock<ILineReaderWriter> consoleInvalidAuthentificationMock;
         private Mock<Account> accountMock;
         private Atm atm;
         private int i;
@@ -58,6 +60,9 @@ namespace SecretMissionTest
             consoleAuthentificationMock.Setup(t => t.ReadLine()).Returns(() => validAuthentification[i])
                 .Callback(() => i++);
             aValidAccount = new Account(AnAccountNumber, APinNumber, AFirstName, ALastName, ADateOfBirth, APhoneNumber);
+            consoleInvalidAuthentificationMock = new Mock<ILineReaderWriter>();
+            consoleInvalidAuthentificationMock.Setup(t => t.ReadLine()).Returns(() => invalidAuthentification[i])
+                .Callback(() => i++);
         }
 
         [Test]
@@ -92,9 +97,6 @@ namespace SecretMissionTest
         [Test]
         public void givenInvalidCredentials_whenAuthentificate_thenIsNotAuthentificated()
         {
-            var consoleInvalidAuthentificationMock = new Mock<ILineReaderWriter>();
-            consoleInvalidAuthentificationMock.Setup(t => t.ReadLine()).Returns(() => invalidAuthentification[i])
-                .Callback(() => i++);
             atm = new Atm(consoleInvalidAuthentificationMock.Object, accountFactoryMock.Object);
             atm.AddAccount(aValidAccount);
 
@@ -108,10 +110,23 @@ namespace SecretMissionTest
         {
             atm = new Atm(consoleAuthentificationMock.Object, accountFactoryMock.Object);
             atm.AddAccount(aValidAccount);
-            
+
             atm.AccountInfo();
-            
-            consoleAuthentificationMock.Verify(t => t.WriteLine(""));
+
+            consoleAuthentificationMock.Verify(t => t.WriteLine(It.IsAny<string>()), Times.Exactly(3));
+        }
+
+        [Test]
+        public void givenNonExistingAccount_whenAccountInfo_thenNoDisplayingOccured()
+        {
+            atm = new Atm(consoleInvalidAuthentificationMock.Object, accountFactoryMock.Object);
+            atm.AddAccount(aValidAccount);
+
+            atm.AccountInfo();
+
+            consoleInvalidAuthentificationMock.Verify(t => t.WriteLine(It.IsAny<string>()), Times.AtMost(3));
+            consoleInvalidAuthentificationMock.Verify(
+                t => t.WriteLine("The account number and pin number does not match."), Times.AtLeastOnce);
         }
     }
 }
