@@ -7,6 +7,7 @@ namespace SecretMission
         static void Main(string[] args)
         {
             var atm = new Atm();
+            var accountFactory = new AccountFactory(new RandomAccountNumberGenerator());
             while (true)
             {
                 Console.WriteLine(@"Menu");
@@ -20,7 +21,7 @@ namespace SecretMission
                 switch (menuChoice)
                 {
                     case 1:                       
-                        atm.CreateAccount();
+                        atm.CreateAccount(new ConsoleWrapper(), accountFactory);
                         break;
                     case 2:
                         //Console.WriteLine(@"1.Deposit Or Withdraw");

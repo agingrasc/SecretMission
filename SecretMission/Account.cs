@@ -14,6 +14,10 @@ namespace SecretMission
         private double balance;
         private int pinNumber, accountNumber;
 
+        public Account()
+        {
+        }
+
         public Account(int pinNumber, int accountNumber)
         {
             this.pinNumber = pinNumber;
@@ -93,7 +97,7 @@ namespace SecretMission
             }
         }
 
-        public void GenerateAccount(ILineReaderWriter console)
+        public virtual void GenerateAccount(ILineReaderWriter console)
         {
             console.WriteLine(@"Enter your first name: ");
             firstName = console.ReadLine();
@@ -103,6 +107,26 @@ namespace SecretMission
             phoneNumber = console.ReadLine();
             console.WriteLine(@"Enter your date of birth: ");
             dateOfBirth = console.ReadLine();
+        }
+    }
+
+    public interface IAccountFactory
+    {
+        Account CreateAccountFromPinNumber(int pinNumber);
+    }
+
+    public class AccountFactory : IAccountFactory
+    {
+        private readonly IAccountNumberGenerator generator;
+
+        public AccountFactory(IAccountNumberGenerator generator)
+        {
+            this.generator = generator;
+        }
+
+        public Account CreateAccountFromPinNumber(int pinNumber)
+        {
+            return new Account(pinNumber, generator.Generate());
         }
     }
 }

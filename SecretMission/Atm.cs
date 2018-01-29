@@ -1,33 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace SecretMission
 {
     public class Atm
     {
         private static readonly List<Account> AccountsList;
-        private Account currentAccount;         
+        private Account currentAccount;
 
         static Atm()
         {
             AccountsList = new List<Account>();
         }
 
-        public void CreateAccount()
+        public void CreateAccount(ILineReaderWriter console, IAccountFactory accountFactory)
         {
             try
             {
-                var randomGenerator = new Random();
-                Console.WriteLine(@"Choose a PIN: ");
-                var account = new Account(int.Parse(Console.ReadLine()), randomGenerator.Next(1, 10000));
-                account.GenerateAccount(new ConsoleWrapper());
+                console.WriteLine(@"Choose a PIN: ");
+                var pinNumber = int.Parse(console.ReadLine());
+                Account account = accountFactory.CreateAccountFromPinNumber(pinNumber);
+                account.GenerateAccount(console);
                 AccountsList.Add(account);
                 currentAccount = account;
-                Console.WriteLine($@"Your account number is : {account.AccountNumber}");
+                console.WriteLine($@"Your account number is : {account.AccountNumber}");
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                //Nothing
+                throw e;
             }
         }
 
