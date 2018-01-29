@@ -5,7 +5,7 @@ namespace SecretMission
     public interface IAccount
     {
         //TODO: maybe some day this interface will be used to create other types of accounts... or not
-        void GenerateAccount();
+        void GenerateAccount(ILineReaderWriter console);
     }
 
     public class Account : IAccount
@@ -93,16 +93,16 @@ namespace SecretMission
             }
         }
 
-        public void GenerateAccount()
+        public void GenerateAccount(ILineReaderWriter console)
         {
-            Console.WriteLine(@"Enter your first name: ");
-            firstName = Console.ReadLine();
-            Console.WriteLine(@"Enter your last name: ");
-            lastName = Console.ReadLine();
-            Console.WriteLine(@"Enter your phone number: ");
-            phoneNumber = Console.ReadLine();
-            Console.WriteLine(@"Enter your date of birth: ");
-            dateOfBirth = Console.ReadLine();
+            console.WriteLine(@"Enter your first name: ");
+            firstName = console.ReadLine();
+            console.WriteLine(@"Enter your last name: ");
+            lastName = console.ReadLine();
+            console.WriteLine(@"Enter your phone number: ");
+            phoneNumber = console.ReadLine();
+            console.WriteLine(@"Enter your date of birth: ");
+            dateOfBirth = console.ReadLine();
         }
     }
 }

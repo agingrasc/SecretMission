@@ -20,7 +20,7 @@ namespace SecretMission
                 var randomGenerator = new Random();
                 Console.WriteLine(@"Choose a PIN: ");
                 var account = new Account(int.Parse(Console.ReadLine()), randomGenerator.Next(1, 10000));
-                account.GenerateAccount();
+                account.GenerateAccount(new ConsoleWrapper());
                 AccountsList.Add(account);
                 currentAccount = account;
                 Console.WriteLine($@"Your account number is : {account.AccountNumber}");

@@ -10,11 +10,11 @@
         string ReadLine();
     }
 
-    public interface ILineLineReaderLineWriter : ILineWriter, ILineReader
+    public interface ILineReaderWriter : ILineWriter, ILineReader
     {
     }
 
-    public class ConsoleWrapper: ILineLineReaderLineWriter
+    public class ConsoleWrapper: ILineReaderWriter
     {
         public void WriteLine(string line)
         {
