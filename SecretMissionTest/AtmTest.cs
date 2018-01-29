@@ -12,20 +12,32 @@ namespace SecretMissionTest
         private const int APinNumber = 1234;
         private const int AnInvalidAccountNumber = 13;
         private const int AnInvalidPinNumber = 666;
-        private readonly List<string> authentification;
+        private const string AFirstName = "John";
+        private const string ALastName = "Smith";
+        private const string ADateOfBirth = "01/01/2000";
+        private const string APhoneNumber = "418 123-4567";
+        private readonly List<string> validAuthentification;
+        private readonly List<string> invalidAuthentification;
 
         private Mock<IAccountFactory> accountFactoryMock;
         private Mock<ILineReaderWriter> consoleMock;
+        private Mock<ILineReaderWriter> consoleAuthentificationMock;
         private Mock<Account> accountMock;
         private Atm atm;
         private int i;
+        private Account aValidAccount;
 
         public AtmTest()
         {
-            authentification = new List<string>
+            validAuthentification = new List<string>
             {
                 AnAccountNumber.ToString(),
                 APinNumber.ToString()
+            };
+            invalidAuthentification = new List<string>
+            {
+                AnInvalidAccountNumber.ToString(),
+                AnInvalidPinNumber.ToString()
             };
         }
 
@@ -42,6 +54,10 @@ namespace SecretMissionTest
             atm = new Atm(consoleMock.Object, accountFactoryMock.Object);
 
             i = 0;
+            consoleAuthentificationMock = new Mock<ILineReaderWriter>();
+            consoleAuthentificationMock.Setup(t => t.ReadLine()).Returns(() => validAuthentification[i])
+                .Callback(() => i++);
+            aValidAccount = new Account(AnAccountNumber, APinNumber, AFirstName, ALastName, ADateOfBirth, APhoneNumber);
         }
 
         [Test]
@@ -63,37 +79,39 @@ namespace SecretMissionTest
         }
 
         [Test]
-        public void givenValidAccount_whenValidateAccount_thenAccountIsValid()
-        {
-            var account = new Account(AnAccountNumber, APinNumber);
-
-            var actual = atm.ValidateAccount(account, AnAccountNumber, APinNumber);
-
-            Assert.IsTrue(actual);
-        }
-
-        [Test]
-        public void givenInvalidAccount_whenValidateAccount_thenAccountIsInvalid()
-        {
-            var account = new Account(AnAccountNumber, APinNumber);
-
-            var actual = atm.ValidateAccount(account, AnInvalidAccountNumber, AnInvalidPinNumber);
-
-            Assert.IsFalse(actual);
-        }
-
-        [Test]
         public void givenValidCredentials_whenAuthentificate_thenIsAuthentificated()
         {
-            var account = new Account(AnAccountNumber, APinNumber);
-            var consoleAuthentificationMock = new Mock<ILineReaderWriter>();
-            consoleAuthentificationMock.Setup(t => t.ReadLine()).Returns(() => authentification[i]).Callback(() => i++);
             atm = new Atm(consoleAuthentificationMock.Object, accountFactoryMock.Object);
-            atm.AddAccount(account);
+            atm.AddAccount(aValidAccount);
 
             var authentificatedAccount = atm.Authentificate();
 
-            Assert.AreEqual(account, authentificatedAccount);
+            Assert.AreEqual(aValidAccount, authentificatedAccount);
+        }
+
+        [Test]
+        public void givenInvalidCredentials_whenAuthentificate_thenIsNotAuthentificated()
+        {
+            var consoleInvalidAuthentificationMock = new Mock<ILineReaderWriter>();
+            consoleInvalidAuthentificationMock.Setup(t => t.ReadLine()).Returns(() => invalidAuthentification[i])
+                .Callback(() => i++);
+            atm = new Atm(consoleInvalidAuthentificationMock.Object, accountFactoryMock.Object);
+            atm.AddAccount(aValidAccount);
+
+            var authentificatedAccount = atm.Authentificate();
+
+            Assert.IsNull(authentificatedAccount);
+        }
+
+        [Test]
+        public void givenExistingAccount_whenAccountInfo_thenAccountInfoIsDisplayed()
+        {
+            atm = new Atm(consoleAuthentificationMock.Object, accountFactoryMock.Object);
+            atm.AddAccount(aValidAccount);
+            
+            atm.AccountInfo();
+            
+            consoleAuthentificationMock.Verify(t => t.WriteLine(""));
         }
     }
 }

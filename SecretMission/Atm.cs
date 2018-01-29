@@ -41,33 +41,26 @@ namespace SecretMission
         {
             //var accountExists = ValidateAccount();
             //Validating that the account exists
-            Console.WriteLine(@"Enter your account number: ");
-            var accountNumber = int.Parse(Console.ReadLine());
-            Console.WriteLine(@"Enter your PIN: ");
-            var pinNumber = int.Parse(Console.ReadLine());
+            console.WriteLine(@"Enter your account number: ");
+            var accountNumber = int.Parse(console.ReadLine());
+            console.WriteLine(@"Enter your PIN: ");
+            var pinNumber = int.Parse(console.ReadLine());
 
             var accountExists = AccountsList.Exists(x => x.AccountNumber == accountNumber && x.PinNumber == pinNumber);
 
-            Console.WriteLine(
+            console.WriteLine(
                 accountExists
                     ? $@"{Environment.NewLine}First name: {currentAccount.FirstName}{Environment.NewLine}Last name: {currentAccount.LastName}{Environment.NewLine}Phone number: {currentAccount.PhoneNumber}{Environment.NewLine}Date of birth: { currentAccount.DateOfBirth}{Environment.NewLine}": @"Account number and PIN do not match.");
         }
 
         public void Deposit()
         {
-            //TODO: this will work some day
-            var validAccount = ValidateAccount(this.currentAccount, 0, 0);
+            var account = Authentificate();
 
-            if (!validAccount)
-            {
-                Console.WriteLine(@"Account number and PIN do not match.");
-                return;
-            }
-
-            Console.WriteLine($@"Your account balance is: {currentAccount.Balance}");
+            Console.WriteLine($@"Your account balance is: {account.Balance}");
             Console.WriteLine(@"Enter the amount you wish to deposit");
             var amount = double.Parse(Console.ReadLine());
-            currentAccount.Balance += amount;
+            account.Balance += amount;
         }
 
         public void Withdraw()
@@ -103,14 +96,15 @@ namespace SecretMission
             currentAccount.Balance -= amount;
         }
 
-        public bool ValidateAccount(Account currentAccount, int accountNumber, int pinNumber)
+        public Account ValidateAccount(int accountNumber, int pinNumber)
         {
-            return currentAccount.PinNumber == pinNumber && currentAccount.AccountNumber == accountNumber;
-        }
-
-        public void AddAccount(Account account)
-        {
-            AccountsList.Add(account);
+            var accountExist = AccountsList.Exists(x => x.AccountNumber == accountNumber && x.PinNumber == pinNumber);
+            if (accountExist)
+            {
+                return AccountsList.Find(x => x.AccountNumber == accountNumber && x.PinNumber == pinNumber);
+            }
+            console.WriteLine("The account number and pin number does not match.");
+            return null;
         }
 
         public Account Authentificate()
@@ -129,13 +123,13 @@ namespace SecretMission
                 console.WriteLine("Account number and pin number must not be empty.");
             }
 
-            var accountExist = AccountsList.Exists(x => x.AccountNumber == accountNumber && x.PinNumber == pinNumber);
-            if (accountExist)
-            {
-                return AccountsList.Find(x => x.AccountNumber == accountNumber && x.PinNumber == pinNumber);
-            }
-            console.WriteLine("The account number and pin number does not match.");
-            return null;
+            return ValidateAccount(accountNumber, pinNumber);
         }
+        
+        public void AddAccount(Account account)
+        {
+            AccountsList.Add(account);
+        }
+
     }
 }

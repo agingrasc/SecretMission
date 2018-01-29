@@ -26,6 +26,17 @@ namespace SecretMission
             balance = 0;
         }
 
+        public Account(int accountNumber, int pinNumber, string firstName, string lastName, string dateOfBirth,
+            string phoneNumber)
+        {
+            this.pinNumber = pinNumber;
+            this.accountNumber = accountNumber;
+            this.firstName = firstName;
+            this.lastName = lastName;
+            this.dateOfBirth = dateOfBirth;
+            this.phoneNumber = phoneNumber;
+        }
+
         public string FirstName
         {
             get => firstName;
