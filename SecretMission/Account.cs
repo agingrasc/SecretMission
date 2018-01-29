@@ -16,9 +16,10 @@ namespace SecretMission
 
         public Account()
         {
+            // For Moq
         }
 
-        public Account(int pinNumber, int accountNumber)
+        public Account(int accountNumber, int pinNumber)
         {
             this.pinNumber = pinNumber;
             this.accountNumber = accountNumber;
@@ -126,7 +127,7 @@ namespace SecretMission
 
         public Account CreateAccountFromPinNumber(int pinNumber)
         {
-            return new Account(pinNumber, generator.Generate());
+            return new Account(generator.Generate(), pinNumber);
         }
     }
 }

@@ -39,7 +39,7 @@ namespace SecretMissionTest
             consoleMock = new Mock<ILineReaderWriter>();
             consoleMock.Setup(t => t.ReadLine()).Returns(() => APersonInput[i]).Callback(() => i++);
             console = consoleMock.Object;
-            account = new Account(APinNumber, AnAccountNumber);
+            account = new Account(AnAccountNumber, APinNumber);
         }
         
         [Test]

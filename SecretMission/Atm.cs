@@ -1,20 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Xml;
 
 namespace SecretMission
 {
     public class Atm
     {
-        private static readonly List<Account> AccountsList;
+        private readonly List<Account> AccountsList;
         private Account currentAccount;
+        private readonly ILineReaderWriter console;
+        private readonly IAccountFactory accountFactory;
 
-        static Atm()
+        public Atm(ILineReaderWriter console, IAccountFactory accountFactory)
         {
             AccountsList = new List<Account>();
+            this.console = console;
+            this.accountFactory = accountFactory;
         }
 
-        public void CreateAccount(ILineReaderWriter console, IAccountFactory accountFactory)
+        public void CreateAccount()
         {
             try
             {
@@ -26,9 +31,9 @@ namespace SecretMission
                 currentAccount = account;
                 console.WriteLine($@"Your account number is : {account.AccountNumber}");
             }
-            catch (Exception e)
+            catch (ArgumentNullException)
             {
-                throw e;
+                console.WriteLine("The pin number can not be empty.");
             }
         }
 
@@ -51,7 +56,7 @@ namespace SecretMission
         public void Deposit()
         {
             //TODO: this will work some day
-            var validAccount = ValidateAccount();
+            var validAccount = ValidateAccount(this.currentAccount, 0, 0);
 
             if (!validAccount)
             {
@@ -98,10 +103,39 @@ namespace SecretMission
             currentAccount.Balance -= amount;
         }
 
-        private bool ValidateAccount()
+        public bool ValidateAccount(Account currentAccount, int accountNumber, int pinNumber)
         {
-            return false;
-            //TODO: maybe write some code here because it is duplicated in more than one method
+            return currentAccount.PinNumber == pinNumber && currentAccount.AccountNumber == accountNumber;
+        }
+
+        public void AddAccount(Account account)
+        {
+            AccountsList.Add(account);
+        }
+
+        public Account Authentificate()
+        {
+            var accountNumber = 0;
+            var pinNumber = 0;
+            try
+            {
+                console.WriteLine("Enter your account number: ");
+                accountNumber = int.Parse(console.ReadLine());
+                console.WriteLine("Enter your pin number: ");
+                pinNumber = int.Parse(console.ReadLine());
+            }
+            catch (ArgumentNullException)
+            {
+                console.WriteLine("Account number and pin number must not be empty.");
+            }
+
+            var accountExist = AccountsList.Exists(x => x.AccountNumber == accountNumber && x.PinNumber == pinNumber);
+            if (accountExist)
+            {
+                return AccountsList.Find(x => x.AccountNumber == accountNumber && x.PinNumber == pinNumber);
+            }
+            console.WriteLine("The account number and pin number does not match.");
+            return null;
         }
     }
 }
