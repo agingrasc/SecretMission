@@ -9,9 +9,9 @@ namespace SecretMission
 
     public class Account : IAccount
     {
+        private int pinNumber, accountNumber;
         private string firstName, lastName, dateOfBirth, phoneNumber;
         private double balance;
-        private int pinNumber, accountNumber;
 
         public Account()
         {
@@ -20,16 +20,16 @@ namespace SecretMission
 
         public Account(int accountNumber, int pinNumber)
         {
-            this.pinNumber = pinNumber;
-            this.accountNumber = accountNumber;
+            PinNumber = pinNumber;
+            AccountNumber = accountNumber;
             balance = 0;
         }
 
         public Account(int accountNumber, int pinNumber, string firstName, string lastName, string dateOfBirth,
             string phoneNumber)
         {
-            this.pinNumber = pinNumber;
-            this.accountNumber = accountNumber;
+            PinNumber = pinNumber;
+            AccountNumber = accountNumber;
             this.firstName = firstName;
             this.lastName = lastName;
             this.dateOfBirth = dateOfBirth;
@@ -39,7 +39,7 @@ namespace SecretMission
         public string FirstName
         {
             get => firstName;
-            set
+            private set
             {
                 if (string.IsNullOrEmpty(value)) throw new Exception();
                 firstName = value;
@@ -49,7 +49,7 @@ namespace SecretMission
         public string LastName
         {
             get => lastName;
-            set
+            private set
             {
                 if (string.IsNullOrEmpty(value)) throw new Exception();
                 lastName = value;
@@ -59,7 +59,7 @@ namespace SecretMission
         public string DateOfBirth
         {
             get => dateOfBirth;
-            set
+            private set
             {
                 if (string.IsNullOrEmpty(value)) throw new Exception();
                 dateOfBirth = value;
@@ -69,7 +69,7 @@ namespace SecretMission
         public string PhoneNumber
         {
             get => phoneNumber;
-            set
+            private set
             {
                 if (string.IsNullOrEmpty(value)) throw new Exception();
                 phoneNumber = value;
@@ -79,9 +79,13 @@ namespace SecretMission
         public virtual int AccountNumber
         {
             get => accountNumber;
-            set
+            private set
             {
-                if (accountNumber < 0) throw new Exception();
+                if (accountNumber < 0)
+                {
+                    throw new Exception();
+                }
+
                 accountNumber = value;
             }
         }
@@ -89,12 +93,14 @@ namespace SecretMission
         public virtual int PinNumber
         {
             get => pinNumber;
-            set
+            private set
             {
-                if (pinNumber >= 0)
-                    pinNumber = value;
-                else
+                if (pinNumber < 0)
+                {
                     throw new Exception();
+                }
+
+                pinNumber = value;
             }
         }
 
@@ -111,13 +117,13 @@ namespace SecretMission
         public virtual void GenerateAccount(ILineReaderWriter console)
         {
             console.WriteLine(@"Enter your first name: ");
-            firstName = console.ReadLine();
+            FirstName = console.ReadLine();
             console.WriteLine(@"Enter your last name: ");
-            lastName = console.ReadLine();
+            LastName = console.ReadLine();
             console.WriteLine(@"Enter your phone number: ");
-            phoneNumber = console.ReadLine();
+            PhoneNumber = console.ReadLine();
             console.WriteLine(@"Enter your date of birth: ");
-            dateOfBirth = console.ReadLine();
+            DateOfBirth = console.ReadLine();
         }
 
         public virtual void Deposit(double amount)
