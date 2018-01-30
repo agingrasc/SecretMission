@@ -30,8 +30,18 @@ namespace SecretMission
                 console.WriteLine("The pin number can not be empty.");
             }
 
-            Account account = accountFactory.CreateAccountFromPinNumber(pinNumber);
-            account.GenerateAccount(console);
+            Account account;
+            try
+            {
+                account = accountFactory.CreateAccountFromPinNumber(pinNumber);
+                account.GenerateAccount(console);
+            }
+            catch (Exception)
+            {
+                console.WriteLine("Invalid information, the account was not created.");
+                return;
+            }
+
             accountsList.Add(account);
             console.WriteLine($@"Your account number is : {account.AccountNumber}");
         }

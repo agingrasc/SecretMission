@@ -20,6 +20,11 @@ namespace SecretMission
 
         public Account(int accountNumber, int pinNumber)
         {
+            if (pinNumber < 0 || accountNumber < 0)
+            {
+                throw new Exception();
+            }
+
             PinNumber = pinNumber;
             AccountNumber = accountNumber;
             balance = 0;
@@ -28,6 +33,11 @@ namespace SecretMission
         public Account(int accountNumber, int pinNumber, string firstName, string lastName, string dateOfBirth,
             string phoneNumber)
         {
+            if (pinNumber < 0 || accountNumber < 0)
+            {
+                throw new Exception();
+            }
+
             PinNumber = pinNumber;
             AccountNumber = accountNumber;
             this.firstName = firstName;
