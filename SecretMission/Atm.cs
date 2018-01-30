@@ -8,7 +8,6 @@ namespace SecretMission
     public class Atm
     {
         private readonly List<Account> AccountsList;
-        private Account currentAccount;
         private readonly ILineReaderWriter console;
         private readonly IAccountFactory accountFactory;
 
@@ -28,7 +27,6 @@ namespace SecretMission
                 Account account = accountFactory.CreateAccountFromPinNumber(pinNumber);
                 account.GenerateAccount(console);
                 AccountsList.Add(account);
-                currentAccount = account;
                 console.WriteLine($@"Your account number is : {account.AccountNumber}");
             }
             catch (ArgumentNullException)
@@ -56,44 +54,56 @@ namespace SecretMission
         {
             var account = Authentificate();
 
-            Console.WriteLine($@"Your account balance is: {account.Balance}");
-            Console.WriteLine(@"Enter the amount you wish to deposit");
-            var amount = double.Parse(Console.ReadLine());
+            if (account == null)
+            {
+                return;
+            }
+
+            console.WriteLine($"Your account balance is: {account.Balance}");
+            console.WriteLine("Enter the amount you wish to deposit");
+
+            double amount = 0;
+            try
+            {
+                amount = double.Parse(console.ReadLine());
+            }
+            catch (ArgumentNullException)
+            {
+                console.WriteLine("The deposit must not be empty.");
+            }
+
             account.Balance += amount;
         }
 
         public void Withdraw()
         {
-            //Validating that the account exists
-            Console.WriteLine(@"Enter your account number: ");
-            var accountNumber = int.Parse(Console.ReadLine());
-            Console.WriteLine(@"Enter your PIN: ");
-            var pinNumber = int.Parse(Console.ReadLine());
+            var account = Authentificate();
 
-            var accountExists = AccountsList.Exists(x => x.AccountNumber == accountNumber || x.PinNumber == pinNumber);
-
-            if (accountExists)
+            if (account == null)
             {
-                var account = AccountsList.Find(x => x.AccountNumber == accountNumber && x.PinNumber == pinNumber);
-                currentAccount = account;
-            }
-
-            if (!accountExists)
-            {
-                Console.WriteLine(@"Account number and PIN do not match.");
                 return;
             }
 
-            Console.WriteLine($@"Your account balance is: {currentAccount.Balance}");
-            Console.WriteLine(@"Enter the amount you wish to withdraw");
-            var amount = double.Parse(Console.ReadLine());
-            if (currentAccount.Balance < amount)
+            console.WriteLine($"Your account balance is: {account.Balance}");
+            console.WriteLine("Enter the amount you wish to withdraw");
+
+            double amount = 0;
+            try
             {
-                Console.WriteLine(@"Your current balance is less than the amount you wish to withdraw.");
+                amount = double.Parse(console.ReadLine());
+            }
+            catch (ArgumentNullException)
+            {
+                console.WriteLine("The amount to withdraw must not be null.");
+            }
+
+            if (account.Balance < amount)
+            {
+                Console.WriteLine("Your current balance is less than the amount you wish to withdraw.");
                 return;
             }
 
-            currentAccount.Balance -= amount;
+            account.Balance -= amount;
         }
 
         private Account ValidateAccount(int accountNumber, int pinNumber)

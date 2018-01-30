@@ -17,13 +17,17 @@ namespace SecretMissionTest
         private const string ALastName = "Smith";
         private const string ADateOfBirth = "01/01/2000";
         private const string APhoneNumber = "418 123-4567";
-        private readonly List<string> validAuthentification;
-        private readonly List<string> invalidAuthentification;
+        private const double ADeposit = 20;
+        private const double ASmallerDeposit = 10;
+        private readonly List<string> validAuthentificationExchange;
+        private readonly List<string> invalidAuthentificationExchange;
+        private readonly List<string> validDepositExchange;
 
         private Mock<IAccountFactory> accountFactoryMock;
         private Mock<ILineReaderWriter> consoleMock;
         private Mock<ILineReaderWriter> consoleAuthentificationMock;
         private Mock<ILineReaderWriter> consoleInvalidAuthentificationMock;
+        private Mock<ILineReaderWriter> validDepositMock;
         private Mock<Account> accountMock;
         private Atm atm;
         private int i;
@@ -31,15 +35,21 @@ namespace SecretMissionTest
 
         public AtmTest()
         {
-            validAuthentification = new List<string>
+            validAuthentificationExchange = new List<string>
             {
                 AnAccountNumber.ToString(),
                 APinNumber.ToString()
             };
-            invalidAuthentification = new List<string>
+            invalidAuthentificationExchange = new List<string>
             {
                 AnInvalidAccountNumber.ToString(),
                 AnInvalidPinNumber.ToString()
+            };
+            validDepositExchange = new List<string>
+            {
+                AnAccountNumber.ToString(),
+                APinNumber.ToString(),
+                ADeposit.ToString()
             };
         }
 
@@ -54,15 +64,20 @@ namespace SecretMissionTest
             accountFactoryMock.Setup(t => t.CreateAccountFromPinNumber(AnAccountNumber))
                 .Returns(() => accountMock.Object);
             atm = new Atm(consoleMock.Object, accountFactoryMock.Object);
+            aValidAccount = new Account(AnAccountNumber, APinNumber, AFirstName, ALastName, ADateOfBirth, APhoneNumber);
 
             i = 0;
+
             consoleAuthentificationMock = new Mock<ILineReaderWriter>();
-            consoleAuthentificationMock.Setup(t => t.ReadLine()).Returns(() => validAuthentification[i])
+            consoleAuthentificationMock.Setup(t => t.ReadLine()).Returns(() => validAuthentificationExchange[i])
                 .Callback(() => i++);
-            aValidAccount = new Account(AnAccountNumber, APinNumber, AFirstName, ALastName, ADateOfBirth, APhoneNumber);
             consoleInvalidAuthentificationMock = new Mock<ILineReaderWriter>();
-            consoleInvalidAuthentificationMock.Setup(t => t.ReadLine()).Returns(() => invalidAuthentification[i])
+            consoleInvalidAuthentificationMock.Setup(t => t.ReadLine())
+                .Returns(() => invalidAuthentificationExchange[i])
                 .Callback(() => i++);
+
+            validDepositMock = new Mock<ILineReaderWriter>();
+            validDepositMock.Setup(t => t.ReadLine()).Returns(() => validDepositExchange[i]).Callback(() => i++);
         }
 
         [Test]
@@ -127,6 +142,81 @@ namespace SecretMissionTest
             consoleInvalidAuthentificationMock.Verify(t => t.WriteLine(It.IsAny<string>()), Times.AtMost(3));
             consoleInvalidAuthentificationMock.Verify(
                 t => t.WriteLine("The account number and pin number does not match."), Times.AtLeastOnce);
+        }
+
+        [Test]
+        public void givenExistingAccount_whenDeposit_thenDepositOccured()
+        {
+            atm = new Atm(validDepositMock.Object, accountFactoryMock.Object);
+            atm.AddAccount(aValidAccount);
+
+            atm.Deposit();
+
+            Assert.AreEqual(ADeposit, aValidAccount.Balance);
+        }
+
+        [Test]
+        public void givenNonExistingAccount_whenDeposit_thenNoDepositOccured()
+        {
+            atm = new Atm(consoleInvalidAuthentificationMock.Object, accountFactoryMock.Object);
+            atm.AddAccount(aValidAccount);
+
+            atm.Deposit();
+
+            consoleInvalidAuthentificationMock.Verify(t => t.WriteLine(It.IsAny<string>()), Times.Exactly(3));
+        }
+
+        [Test]
+        public void givenNonExistingAccount_whenDeposit_thenNoExceptionIsThrowed()
+        {
+            atm = new Atm(consoleInvalidAuthentificationMock.Object, accountFactoryMock.Object);
+            atm.AddAccount(aValidAccount);
+
+            Assert.DoesNotThrow(() => atm.Deposit());
+        }
+
+        [Test]
+        public void givenNonExistingAccount_whenWithdraw_thenNoWithdrawOccured()
+        {
+            atm = new Atm(consoleInvalidAuthentificationMock.Object, accountFactoryMock.Object);
+            atm.AddAccount(aValidAccount);
+
+            atm.Withdraw();
+
+            consoleInvalidAuthentificationMock.Verify(t => t.WriteLine(It.IsAny<string>()), Times.Exactly(3));
+        }
+
+        [Test]
+        public void givenNonExistingAccount_whenWithdraw_thenNoExceptionIsThrowed()
+        {
+            atm = new Atm(consoleInvalidAuthentificationMock.Object, accountFactoryMock.Object);
+            atm.AddAccount(aValidAccount);
+
+            Assert.DoesNotThrow(() => atm.Withdraw());
+        }
+
+        [Test]
+        public void givenExistingAccountWithABalance_whenWithdraw_thenAmountIsWithdrawed()
+        {
+            atm = new Atm(validDepositMock.Object, accountFactoryMock.Object);
+            aValidAccount.Balance = ADeposit;
+            atm.AddAccount(aValidAccount);
+
+            atm.Withdraw();
+
+            Assert.AreEqual(0, aValidAccount.Balance);
+        }
+
+        [Test]
+        public void givenExistingAccountWithInsufficientBalance_whenWithdraw_thenNoAmountIsWithdrawed()
+        {
+            atm = new Atm(validDepositMock.Object, accountFactoryMock.Object);
+            aValidAccount.Balance = ASmallerDeposit;
+            atm.AddAccount(aValidAccount);
+
+            atm.Withdraw();
+
+            Assert.AreEqual(ASmallerDeposit, aValidAccount.Balance);
         }
     }
 }
