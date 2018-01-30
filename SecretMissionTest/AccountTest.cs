@@ -41,12 +41,12 @@ namespace SecretMissionTest
             console = consoleMock.Object;
             account = new Account(AnAccountNumber, APinNumber);
         }
-        
+
         [Test]
         public void givenValidInformation_whenGenerateAccount_thenTheInformationIsCorrectlyRequested()
         {
             account.GenerateAccount(console);
-            
+
             consoleMock.Verify(t => t.WriteLine(It.IsAny<string>()), Times.Exactly(4));
         }
 
@@ -54,7 +54,7 @@ namespace SecretMissionTest
         public void givenValidInformation_whenGenerateAccount_thenAccountHasTheRightInformation()
         {
             account.GenerateAccount(console);
-            
+
             Assert.AreEqual(AFirstName, account.FirstName);
             Assert.AreEqual(ALastName, account.LastName);
             Assert.AreEqual(APhoneNumber, account.PhoneNumber);

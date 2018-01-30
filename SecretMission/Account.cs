@@ -4,7 +4,6 @@ namespace SecretMission
 {
     public interface IAccount
     {
-        //TODO: maybe some day this interface will be used to create other types of accounts... or not
         void GenerateAccount(ILineReaderWriter console);
     }
 

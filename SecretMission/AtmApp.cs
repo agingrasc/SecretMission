@@ -17,16 +17,14 @@ namespace SecretMission
 
         private static int GetMenuChoice()
         {
-            var menuChoice = -1;
             try
             {
-                menuChoice = int.Parse(Console.ReadLine());
+                return int.Parse(Console.ReadLine());
             }
             catch (ArgumentNullException)
             {
+                return -1;
             }
-
-            return menuChoice;
         }
 
         private static void ExecuteMenuSelection(int menuChoice, Atm atm)
