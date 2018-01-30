@@ -29,7 +29,7 @@ namespace SecretMission
             return menuChoice;
         }
 
-        private static bool ExecuteMenuSelection(int menuChoice, Atm atm)
+        private static void ExecuteMenuSelection(int menuChoice, Atm atm)
         {
             switch (menuChoice)
             {
@@ -46,25 +46,23 @@ namespace SecretMission
                     atm.AccountInfo();
                     break;
                 case 5:
-                    return true;
+                    Environment.Exit(0);
+                    break;
                 default:
                     Console.WriteLine(@"Invalid selection!");
                     break;
             }
-
-            return false;
         }
 
         static void Main(string[] args)
         {
             var accountFactory = new AccountFactory(new RandomAccountNumberGenerator());
             var atm = new Atm(new ConsoleWrapper(), accountFactory);
-            var exit = false;
-            while (!exit)
+            while (true)
             {
                 DisplayMenu();
                 var menuChoice = GetMenuChoice();
-                exit = ExecuteMenuSelection(menuChoice, atm);
+                ExecuteMenuSelection(menuChoice, atm);
             }
         }
     }
