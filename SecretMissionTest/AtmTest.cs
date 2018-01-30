@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using NUnit.Framework;
 using Moq;
 using SecretMission;
@@ -18,7 +17,6 @@ namespace SecretMissionTest
         private const string ADateOfBirth = "01/01/2000";
         private const string APhoneNumber = "418 123-4567";
         private const double ADeposit = 20;
-        private const double ASmallerDeposit = 10;
         private readonly List<string> validAuthentificationExchange;
         private readonly List<string> invalidAuthentificationExchange;
         private readonly List<string> validDepositExchange;
@@ -58,14 +56,18 @@ namespace SecretMissionTest
         {
             consoleMock = new Mock<ILineReaderWriter>();
             consoleMock.Setup(t => t.ReadLine()).Returns(AnAccountNumber.ToString());
+
             accountMock = new Mock<Account>();
             accountMock.Setup(t => t.GenerateAccount(consoleMock.Object));
+            accountMock.Setup(t => t.AccountNumber).Returns(AnAccountNumber);
+            accountMock.Setup(t => t.PinNumber).Returns(APinNumber);
+
             accountFactoryMock = new Mock<IAccountFactory>();
             accountFactoryMock.Setup(t => t.CreateAccountFromPinNumber(AnAccountNumber))
                 .Returns(() => accountMock.Object);
+
             atm = new Atm(consoleMock.Object, accountFactoryMock.Object);
             aValidAccount = new Account(AnAccountNumber, APinNumber, AFirstName, ALastName, ADateOfBirth, APhoneNumber);
-
             i = 0;
 
             consoleAuthentificationMock = new Mock<ILineReaderWriter>();
@@ -145,25 +147,25 @@ namespace SecretMissionTest
         }
 
         [Test]
-        public void givenExistingAccount_whenDeposit_thenDepositOccured()
+        public void givenExistingAccount_whenDeposit_thenDepositRequested()
         {
             atm = new Atm(validDepositMock.Object, accountFactoryMock.Object);
-            atm.AddAccount(aValidAccount);
+            atm.AddAccount(accountMock.Object);
 
             atm.Deposit();
 
-            Assert.AreEqual(ADeposit, aValidAccount.Balance);
+            accountMock.Verify(t => t.Deposit(ADeposit), Times.Once);
         }
 
         [Test]
-        public void givenNonExistingAccount_whenDeposit_thenNoDepositOccured()
+        public void givenNonExistingAccount_whenDeposit_thenNoDepositRequested()
         {
             atm = new Atm(consoleInvalidAuthentificationMock.Object, accountFactoryMock.Object);
-            atm.AddAccount(aValidAccount);
+            atm.AddAccount(accountMock.Object);
 
             atm.Deposit();
 
-            consoleInvalidAuthentificationMock.Verify(t => t.WriteLine(It.IsAny<string>()), Times.Exactly(3));
+            accountMock.Verify(t => t.Deposit(It.IsAny<double>()), Times.Never);
         }
 
         [Test]
@@ -176,14 +178,14 @@ namespace SecretMissionTest
         }
 
         [Test]
-        public void givenNonExistingAccount_whenWithdraw_thenNoWithdrawOccured()
+        public void givenNonExistingAccount_whenWithdraw_thenNoWithdrawRequested()
         {
             atm = new Atm(consoleInvalidAuthentificationMock.Object, accountFactoryMock.Object);
-            atm.AddAccount(aValidAccount);
+            atm.AddAccount(accountMock.Object);
 
             atm.Withdraw();
 
-            consoleInvalidAuthentificationMock.Verify(t => t.WriteLine(It.IsAny<string>()), Times.Exactly(3));
+            accountMock.Verify(t => t.Withdraw(It.IsAny<double>()), Times.Never);
         }
 
         [Test]
@@ -196,27 +198,14 @@ namespace SecretMissionTest
         }
 
         [Test]
-        public void givenExistingAccountWithABalance_whenWithdraw_thenAmountIsWithdrawed()
+        public void givenExistingAccount_whenWithdraw_thenWithdrawRequested()
         {
             atm = new Atm(validDepositMock.Object, accountFactoryMock.Object);
-            aValidAccount.Balance = ADeposit;
-            atm.AddAccount(aValidAccount);
+            atm.AddAccount(accountMock.Object);
 
             atm.Withdraw();
 
-            Assert.AreEqual(0, aValidAccount.Balance);
-        }
-
-        [Test]
-        public void givenExistingAccountWithInsufficientBalance_whenWithdraw_thenNoAmountIsWithdrawed()
-        {
-            atm = new Atm(validDepositMock.Object, accountFactoryMock.Object);
-            aValidAccount.Balance = ASmallerDeposit;
-            atm.AddAccount(aValidAccount);
-
-            atm.Withdraw();
-
-            Assert.AreEqual(ASmallerDeposit, aValidAccount.Balance);
+            accountMock.Verify(t => t.Withdraw(ADeposit), Times.Once);
         }
     }
 }

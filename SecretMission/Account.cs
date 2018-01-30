@@ -76,7 +76,7 @@ namespace SecretMission
             }
         }
 
-        public int AccountNumber
+        public virtual int AccountNumber
         {
             get => accountNumber;
             set
@@ -86,7 +86,7 @@ namespace SecretMission
             }
         }
 
-        public int PinNumber
+        public virtual int PinNumber
         {
             get => pinNumber;
             set
@@ -118,6 +118,26 @@ namespace SecretMission
             phoneNumber = console.ReadLine();
             console.WriteLine(@"Enter your date of birth: ");
             dateOfBirth = console.ReadLine();
+        }
+
+        public virtual void Deposit(double amount)
+        {
+            if (amount >= 0)
+            {
+                Balance += amount;
+            }
+        }
+
+        public virtual void Withdraw(double amount)
+        {
+            if (amount <= Balance)
+            {
+                Balance -= amount;
+            }
+            else
+            {
+                Console.WriteLine("Your current balance is less than the amount you wish to withdraw.");
+            }
         }
     }
 

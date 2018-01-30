@@ -14,6 +14,9 @@ namespace SecretMissionTest
         private const string ALastName = "Smith";
         private const string APhoneNumber = "418 666-1234";
         private const string ADateOfBirth = "01/01/2000";
+        private const double AnAmount = 20;
+        private const double ANegativeAmount = -5;
+        private const double ASmallerAmount = 10;
         private readonly List<string> APersonInput;
 
         private int i;
@@ -59,6 +62,42 @@ namespace SecretMissionTest
             Assert.AreEqual(ALastName, account.LastName);
             Assert.AreEqual(APhoneNumber, account.PhoneNumber);
             Assert.AreEqual(ADateOfBirth, account.DateOfBirth);
+        }
+
+        [Test]
+        public void givenAnAmount_whenDeposit_thenAmountIsDeposited()
+        {
+            account.Deposit(AnAmount);
+
+            Assert.AreEqual(AnAmount, account.Balance);
+        }
+
+        [Test]
+        public void givenANegativeAmount_whenDeposit_thenNoAmountIsDeposited()
+        {
+            account.Deposit(ANegativeAmount);
+
+            Assert.AreEqual(0, account.Balance);
+        }
+
+        [Test]
+        public void givenAnAmountWithSufficientBalance_whenWithdraw_thenAmountIsWithdrawed()
+        {
+            account.Balance = AnAmount;
+
+            account.Withdraw(AnAmount);
+
+            Assert.AreEqual(0, account.Balance);
+        }
+
+        [Test]
+        public void givenAnAmountWithInsufficientBalance_whenWithdraw_thenNoAmountIsWithdrawed()
+        {
+            account.Balance = ASmallerAmount;
+
+            account.Withdraw(AnAmount);
+
+            Assert.AreEqual(ASmallerAmount, account.Balance);
         }
     }
 }

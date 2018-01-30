@@ -65,9 +65,8 @@ namespace SecretMission
             console.WriteLine($"Your account balance is: {account.Balance}");
             console.WriteLine("Enter the amount you wish to deposit");
 
-            double amount = GetAmount();
-
-            account.Balance += amount;
+            var amount = GetAmount();
+            account.Deposit(amount);
         }
 
         public void Withdraw()
@@ -83,14 +82,7 @@ namespace SecretMission
             console.WriteLine("Enter the amount you wish to withdraw");
 
             var amount = GetAmount();
-
-            if (account.Balance < amount)
-            {
-                Console.WriteLine("Your current balance is less than the amount you wish to withdraw.");
-                return;
-            }
-
-            account.Balance -= amount;
+            account.Withdraw(amount);
         }
 
         private Account ValidateAccount(int accountNumber, int pinNumber)
